@@ -115,9 +115,44 @@ class _CameraScreenState extends State<CameraScreen> {
 
       _server!.listen((HttpRequest request) {
         if (request.uri.path == '/') {
+          final html = '''
+<!DOCTYPE html>
+<html>
+<head>
+<title>IP Webcam</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  body { margin: 0; background: #111; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; color: white; font-family: sans-serif; }
+  #stream { max-width: 100%; max-height: 80vh; border: 2px solid #333; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.5); }
+  button { padding: 14px 28px; font-size: 18px; background: #2196F3; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; box-shadow: 0 4px 6px rgba(0,0,0,0.3); transition: background 0.2s; }
+  button:hover { background: #1976D2; }
+</style>
+</head>
+<body>
+  <img id="stream" src="/stream" crossorigin="anonymous" />
+  <button onclick="takeSnapshot()">📸 Take Snapshot</button>
+
+  <script>
+    function takeSnapshot() {
+      const img = document.getElementById('stream');
+      const canvas = document.createElement('canvas');
+      canvas.width = img.naturalWidth || img.width;
+      canvas.height = img.naturalHeight || img.height;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+      
+      const link = document.createElement('a');
+      link.download = 'snapshot-' + new Date().getTime() + '.jpg';
+      link.href = canvas.toDataURL('image/jpeg', 1.0);
+      link.click();
+    }
+  </script>
+</body>
+</html>
+''';
           request.response
             ..headers.contentType = ContentType.html
-            ..write('<html><body style="margin:0;background:#000;display:flex;justify-content:center;align-items:center;height:100vh;"><img src="/stream" style="max-width:100%;max-height:100%;"/></body></html>')
+            ..write(html)
             ..close();
         } else if (request.uri.path == '/stream') {
           request.response
