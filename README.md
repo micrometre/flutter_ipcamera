@@ -79,7 +79,7 @@ GitHub Actions ([`.github/workflows/ci.yml`](.github/workflows/ci.yml)) runs aut
 
 1. **Validate Configs & Scripts:** Checks shell script syntax (`run_avd.sh`, `create_avd.sh`), `pubspec.yaml`, and `AndroidManifest.xml`.
 2. **Flutter Format & Analyze:** Sets up Java 17 and Flutter (`stable`), then runs `flutter analyze` and `flutter test`.
-3. **Build & Release Android APK:** Builds `app-release.apk`, uploads it as a workflow artifact, and publishes `flutter-ipcamera_<version>_release.apk` to **GitHub Releases**.
+3. **Build & Release Android APK:** Builds `app-release.apk`, uploads it as a workflow artifact, and publishes `ip_camera_<version>_release.apk` to **GitHub Releases**.
 
 ## Permissions Required
 

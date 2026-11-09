@@ -27,9 +27,10 @@ jobs:
         run: |
           bash -n run_avd.sh create_avd.sh
 
-      - name: Validate pubspec.yaml & AndroidManifest.xml
+      - name: Validate pubspec.yaml, assets & AndroidManifest.xml
         run: |
           python3 - << 'PY'
+          import os
           import xml.etree.ElementTree as ET
           import yaml
 
@@ -39,7 +40,14 @@ jobs:
           assert "name" in pubspec and "version" in pubspec, "Missing name/version in pubspec.yaml"
           print(f"✓ Valid pubspec.yaml: {pubspec['name']} v{pubspec['version']}")
 
-          # 2. Validate AndroidManifest.xml
+          # 2. Verify bundled assets exist and are non-empty
+          assets = pubspec.get("flutter", {}).get("assets", [])
+          for asset in assets:
+              if not os.path.isfile(asset) or os.path.getsize(asset) == 0:
+                  raise FileNotFoundError(f"Missing or empty asset required by pubspec.yaml: {asset}")
+              print(f"✓ Verified asset: {asset} ({os.path.getsize(asset):,} bytes)")
+
+          # 3. Validate AndroidManifest.xml
           ET.parse("android/app/src/main/AndroidManifest.xml")
           print("✓ Valid XML: android/app/src/main/AndroidManifest.xml")
           PY
@@ -125,14 +133,14 @@ jobs:
           else
             TAG_NAME="v${VERSION}"
           fi
-          ASSET_NAME="flutter-ipcamera_${VERSION}_release.apk"
+          ASSET_NAME="ip_camera_${VERSION}_release.apk"
           cp "${APK_FILE}" "${ASSET_NAME}"
 
           echo "Publishing ${ASSET_NAME} to GitHub Release ${TAG_NAME}..."
           if ! gh release view "${TAG_NAME}" >/dev/null 2>&1; then
             gh release create "${TAG_NAME}" "${ASSET_NAME}" \
               --target "${GITHUB_SHA}" \
-              --title "Flutter IP Camera ${TAG_NAME}" \
+              --title "IP Camera ${TAG_NAME}" \
               --notes "Automated Android APK release build from commit ${GITHUB_SHA}."
           else
             gh release upload "${TAG_NAME}" "${ASSET_NAME}" --clobber
