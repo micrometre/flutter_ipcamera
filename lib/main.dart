@@ -23,7 +23,7 @@ class CameraApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'IP Webcam',
+      title: 'IP Camera',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
@@ -119,7 +119,7 @@ class _CameraScreenState extends State<CameraScreen> {
 <!DOCTYPE html>
 <html>
 <head>
-<title>IP Webcam</title>
+<title>IP Camera</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
   body { margin: 0; background: #111; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; color: white; font-family: sans-serif; }
@@ -206,8 +206,15 @@ class _CameraScreenState extends State<CameraScreen> {
   Future<void> _initializeCamera() async {
     if (cameras.isEmpty) return;
 
+    final selectedCamera = cameras.firstWhere(
+      (c) =>
+          c.lensDirection == CameraLensDirection.back ||
+          c.lensDirection == CameraLensDirection.external,
+      orElse: () => cameras.first,
+    );
+
     final CameraController cameraController = CameraController(
-      cameras[0],
+      selectedCamera,
       ResolutionPreset.medium, // Medium resolution for faster streaming
       enableAudio: false,
     );
