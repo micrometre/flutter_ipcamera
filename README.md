@@ -5,7 +5,8 @@ A Flutter application that turns your mobile device (or Android emulator) into a
 ## Features
 
 - **Full-Screen Camera Preview:** Displays the live camera feed edge-to-edge, adjusting dynamically for both portrait and landscape orientations.
-- **Embedded MJPEG HTTP Server:** Hosts an `x-mixed-replace` multipart stream (`/stream`) and a web viewer UI (`/`) directly from the device via a local `dart:io` HTTP server on port `8080`.
+- **Embedded MJPEG HTTP Server:** Hosts an `x-mixed-replace` multipart stream (`/stream`, `/video`, `/mjpeg`), raw single-frame capture (`/snapshot`, `/shot.jpg`, `/frame.jpg`), and a web viewer UI (`/`) directly from the device via a local `dart:io` HTTP server on port `8080`.
+- **Backend & ANPR Ready:** Exposes direct endpoints for consumption by backend pipelines, OpenCV, FFmpeg, Frigate, or ANPR (Automatic Number Plate Recognition) without requiring UI interaction or manual button presses.
 - **Browser Snapshot Capture:** Includes a **Take Snapshot** button in the web interface to download a JPEG capture directly from the live stream.
 - **Network Interface Detection:** Automatically discovers your device's Wi-Fi interface (`wlan0` on Android, `en0` on iOS) to present the correct local IP.
 - **Public IP Discovery:** Fetches your device's public IP address via `api.ipify.org` for external network access (requires router port forwarding).

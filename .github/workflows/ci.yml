@@ -114,7 +114,10 @@ jobs:
 
       - name: Build Release APK
         run: |
-          flutter build apk --release
+          VERSION=$(grep '^version:' pubspec.yaml | awk '{print $2}' | cut -d'+' -f1)
+          BUILD_NUM=$(grep '^version:' pubspec.yaml | awk '{print $2}' | cut -d'+' -f2)
+          echo "Building APK for version ${VERSION}+${BUILD_NUM}..."
+          flutter build apk --release --build-name="${VERSION}" --build-number="${BUILD_NUM}"
 
       - name: Publish Android APK to GitHub Releases
         env:
